@@ -1,6 +1,30 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 const Contact = () => {
+    const [formStatus, setFormStatus] = useState(''); // 'success', 'error', or ''
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        const form = e.target;
+        const formData = new FormData(form);
+
+        fetch('/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams(formData).toString()
+        })
+            .then(() => {
+                setFormStatus('success');
+                form.reset();
+                setTimeout(() => setFormStatus(''), 5000);
+            })
+            .catch(() => {
+                setFormStatus('error');
+                setTimeout(() => setFormStatus(''), 5000);
+            });
+    };
+
     return (
         <section id="contact" className="section" style={{ backgroundColor: 'var(--color-bg-secondary)' }}>
             <div className="container">
@@ -57,50 +81,100 @@ const Contact = () => {
                     </div>
 
                     {/* Contact Form */}
-                    <form style={{
-                        backgroundColor: 'var(--color-bg-primary)',
-                        padding: '2rem',
-                        borderRadius: '1rem',
-                        border: '1px solid rgba(255,255,255,0.05)'
-                    }} onSubmit={(e) => e.preventDefault()}>
+                    <form
+                        name="contact"
+                        method="POST"
+                        data-netlify="true"
+                        onSubmit={handleSubmit}
+                        style={{
+                            backgroundColor: 'var(--color-bg-primary)',
+                            padding: '2rem',
+                            borderRadius: '1rem',
+                            border: '1px solid rgba(255,255,255,0.05)'
+                        }}
+                    >
+                        <input type="hidden" name="form-name" value="contact" />
+
+                        {formStatus === 'success' && (
+                            <div style={{
+                                padding: '1rem',
+                                marginBottom: '1rem',
+                                backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                                border: '1px solid rgba(34, 197, 94, 0.3)',
+                                borderRadius: '0.5rem',
+                                color: '#22c55e'
+                            }}>
+                                Thank you! Your message has been sent successfully.
+                            </div>
+                        )}
+
+                        {formStatus === 'error' && (
+                            <div style={{
+                                padding: '1rem',
+                                marginBottom: '1rem',
+                                backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                                border: '1px solid rgba(239, 68, 68, 0.3)',
+                                borderRadius: '0.5rem',
+                                color: '#ef4444'
+                            }}>
+                                Oops! Something went wrong. Please try again.
+                            </div>
+                        )}
+
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
                             <div>
                                 <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Name</label>
-                                <input type="text" style={{
-                                    width: '100%',
-                                    padding: '0.75rem',
-                                    backgroundColor: 'var(--color-bg-secondary)',
-                                    border: '1px solid rgba(255,255,255,0.1)',
-                                    borderRadius: '0.5rem',
-                                    color: 'white',
-                                    outline: 'none'
-                                }} placeholder="John Doe" />
+                                <input
+                                    type="text"
+                                    name="name"
+                                    required
+                                    style={{
+                                        width: '100%',
+                                        padding: '0.75rem',
+                                        backgroundColor: 'var(--color-bg-secondary)',
+                                        border: '1px solid rgba(255,255,255,0.1)',
+                                        borderRadius: '0.5rem',
+                                        color: 'white',
+                                        outline: 'none'
+                                    }}
+                                    placeholder="John Doe"
+                                />
                             </div>
                             <div>
                                 <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Email</label>
-                                <input type="email" style={{
-                                    width: '100%',
-                                    padding: '0.75rem',
-                                    backgroundColor: 'var(--color-bg-secondary)',
-                                    border: '1px solid rgba(255,255,255,0.1)',
-                                    borderRadius: '0.5rem',
-                                    color: 'white',
-                                    outline: 'none'
-                                }} placeholder="john@example.com" />
+                                <input
+                                    type="email"
+                                    name="email"
+                                    required
+                                    style={{
+                                        width: '100%',
+                                        padding: '0.75rem',
+                                        backgroundColor: 'var(--color-bg-secondary)',
+                                        border: '1px solid rgba(255,255,255,0.1)',
+                                        borderRadius: '0.5rem',
+                                        color: 'white',
+                                        outline: 'none'
+                                    }}
+                                    placeholder="john@example.com"
+                                />
                             </div>
                         </div>
 
                         <div style={{ marginBottom: '1rem' }}>
                             <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Subject</label>
-                            <select style={{
-                                width: '100%',
-                                padding: '0.75rem',
-                                backgroundColor: 'var(--color-bg-secondary)',
-                                border: '1px solid rgba(255,255,255,0.1)',
-                                borderRadius: '0.5rem',
-                                color: 'white',
-                                outline: 'none'
-                            }}>
+                            <select
+                                name="subject"
+                                required
+                                style={{
+                                    width: '100%',
+                                    padding: '0.75rem',
+                                    backgroundColor: 'var(--color-bg-secondary)',
+                                    border: '1px solid rgba(255,255,255,0.1)',
+                                    borderRadius: '0.5rem',
+                                    color: 'white',
+                                    outline: 'none'
+                                }}
+                            >
                                 <option>General Inquiry</option>
                                 <option>Screen Repair / Hardware Fix</option>
                                 <option>System Optimization / Tune-up</option>
@@ -111,16 +185,22 @@ const Contact = () => {
 
                         <div style={{ marginBottom: '1.5rem' }}>
                             <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Message</label>
-                            <textarea rows="4" style={{
-                                width: '100%',
-                                padding: '0.75rem',
-                                backgroundColor: 'var(--color-bg-secondary)',
-                                border: '1px solid rgba(255,255,255,0.1)',
-                                borderRadius: '0.5rem',
-                                color: 'white',
-                                outline: 'none',
-                                resize: 'vertical'
-                            }} placeholder="How can we help you?"></textarea>
+                            <textarea
+                                name="message"
+                                rows="4"
+                                required
+                                style={{
+                                    width: '100%',
+                                    padding: '0.75rem',
+                                    backgroundColor: 'var(--color-bg-secondary)',
+                                    border: '1px solid rgba(255,255,255,0.1)',
+                                    borderRadius: '0.5rem',
+                                    color: 'white',
+                                    outline: 'none',
+                                    resize: 'vertical'
+                                }}
+                                placeholder="How can we help you?"
+                            ></textarea>
                         </div>
 
                         <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>Send Message</button>
