@@ -94,6 +94,11 @@ const Contact = () => {
                         }}
                     >
                         <input type="hidden" name="form-name" value="contact" />
+                        <p style={{ display: 'none' }}>
+                            <label>
+                                Don't fill this out if you're human: <input name="bot-field" />
+                            </label>
+                        </p>
 
                         {formStatus === 'success' && (
                             <div style={{
